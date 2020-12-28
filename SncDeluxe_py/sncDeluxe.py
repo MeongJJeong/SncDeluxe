@@ -8,9 +8,9 @@ import openpyxl
 from openpyxl.styles import PatternFill
 
 
-def calRate(this , point):
+def calRate(this, point):
     result = this / int(people) * 100
-    return round(result,point)
+    return round(result, point)
 
 
 def exit():
@@ -26,38 +26,50 @@ def excelOutput():
     sheet1 = wb['Sheet']
     sheet1.title = '찡긋 ><'
     deepblueFill = PatternFill(start_color='FF538DD5',
-                          end_color='FF538DD5',
-                          fill_type='solid')
+                               end_color='FF538DD5',
+                               fill_type='solid')
 
-    blueFill = PatternFill(start_color= 'FF95B3D7',
-                          end_color= 'FF95B3D7',
-                          fill_type='solid')
+    blueFill = PatternFill(start_color='FF95B3D7',
+                           end_color='FF95B3D7',
+                           fill_type='solid')
 
     lightblueFill = PatternFill(start_color='FFC5D9F1',
-                           end_color='FFC5D9F1',
-                           fill_type='solid')
+                                end_color='FFC5D9F1',
+                                fill_type='solid')
 
     for t in range(int(examples) + 1):
         sheet1.cell(row=1, column=t + 2).value = "#" + str(t)
         sheet1.cell(row=1, column=t + 2).fill = deepblueFill
 
     for t in range(int(problem)):
-        sheet1.cell(row = 2 * (t + 1),column = 1).value = str(t + 1) + "번"
-        sheet1.cell(row = 2 * (t + 1),column = 1).fill = deepblueFill
+        sheet1.cell(row=2 * (t + 1), column=1).value = str(t + 1) + "번"
+        sheet1.cell(row=2 * (t + 1), column=1).fill = deepblueFill
         sheet1.cell(row=2 * (t + 2) - 1, column=1).fill = deepblueFill
 
     for x in range(int(problem)):
+        sheet1.cell(row=2 * (x + 1), column=int(examples) + 3).value = people
         for y in range(int(examples) + 1):
             if y == 10:
                 k = "t"
             else:
                 k = str(y)
-            sheet1.cell(row = 2 * (x + 1),column=y+2).value = array[x][k]
-            sheet1.cell(row = 2 * (x + 2) - 1,column = y+2).value = (str(calRate(array[x][k], point)))
+            sheet1.cell(row=2 * (x + 1), column=y + 2).value = array[x][k]
+            # sheet1.cell(row = 2 * (x + 2) - 1,column = y+2).value = (str(calRate(array[x][k], point)))
+
+            sheet1.cell(row=2 * (x + 2) - 1, column=y + 2).value = ('%s%s%d%s%s%d%s%d%s%d%s' % (
+                "= ROUND(", excel_alpha[y + 2], (2 * (x + 1)), "/",
+                excel_alpha[int(examples)+3],(2 * (x + 1)), "*", 100, ",", 2, ")"))
 
             if array[x][k] != 0:
                 sheet1.cell(row=2 * (x + 1), column=y + 2).fill = blueFill
                 sheet1.cell(row=2 * (x + 2) - 1, column=y + 2).fill = lightblueFill
+
+        sheet1.cell(row=2 * (x + 1), column=int(examples) + 3).value = ('%s%s%d%s%s%d%s' % (
+            "= SUM(", excel_alpha[2], (2 * (x + 1)), ":",
+            excel_alpha[int(examples) + 2], (2 * (x + 1)), ")"))
+        sheet1.cell(row=2 * (x + 2) - 1, column=int(examples) + 3).value = ('%s%s%d%s%s%d%s%d%s' % (
+            "= ROUND(SUM(", excel_alpha[2], (2 * (x + 2) - 1), ":",
+            excel_alpha[int(examples) + 2], (2 * (x + 2) - 1), "),",0,")"))
 
     name = input("파일 이름을 입력해주세요 >> ")
     wb.save(name + ".xlsx")
@@ -81,13 +93,13 @@ def show():
                 k = str(y)
             print('%2d%-2s%4d%-2s' % (y, ":", array[x][k], "ea"), end=" ")
         print()
-        print("%3s"%"",end="")
+        print("%3s" % "", end="")
         for y in range(int(examples) + 1):
             if y == 10:
                 k = "t"
             else:
                 k = str(y)
-            print('%2s%6.2f%-2s' % ("(",calRate(array[x][k], point), "%)"), end=" ")
+            print('%2s%6.2f%-2s' % ("(", calRate(array[x][k], point), "%)"), end=" ")
         print()
     return
 
@@ -116,10 +128,10 @@ def snap():
 
 def snap_help():
     for x in range(17):
-        print("x",end="")
-    print("***@ 도움말 @***",end="")
+        print("x", end="")
+    print("***@ 도움말 @***", end="")
     for x in range(17):
-        print("x",end="")
+        print("x", end="")
     print()
     print("%-45s%s" % ("| m -> 중간점검", "|"))
     print("%-44s%s" % ("| x -> 무효표 입력", "|"))
@@ -130,13 +142,15 @@ def snap_help():
     # print("s -> excel로 저장")
     # print("exit -> 종료")
     for x in range(50):
-        print("x",end="")
+        print("x", end="")
     print()
+
 
 if __name__ == '__main__':
     array = []
     ques_dic = {}
-    point = 2   #소숫점
+    point = 2  # 소숫점
+    excel_alpha = ["null", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N"]
 
     snap()
 
@@ -179,18 +193,18 @@ if __name__ == '__main__':
             people - 1
             right = True
 
-        print('%s %d%s'%("======",people+1,"번째 입력"))
-        print("**",end="")
+        print('%s %d%s' % ("======", people + 1, "번째 입력"))
+        print("**", end="")
 
         for k in range(int(problem)):
-            print("*",end = "")
+            print("*", end="")
         print()
 
         result = input(">>")
 
         if result == "x":
             abnormal = abnormal + 1
-            print('%s%d%s'%("무효 설문지가 ",abnormal,"개 입력되었습니다."))
+            print('%s%d%s' % ("무효 설문지가 ", abnormal, "개 입력되었습니다."))
             continue
 
         elif result == "s":
@@ -215,7 +229,7 @@ if __name__ == '__main__':
         elif result == "exit":
             right = False
             print()
-            is_exit = input("정말 종료하시겠습니까? (y/n) >> " )
+            is_exit = input("정말 종료하시겠습니까? (y/n) >> ")
             if is_exit == "Y" or is_exit == "y":
                 print("감사합니다.")
                 exit()
