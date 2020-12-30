@@ -1,7 +1,7 @@
-# 20201228
+# 20201230
 # choi_jinwook
 # jinsrobot@naver.com
-# ver - 0.9.3
+# ver - 0.9.4
 
 import os
 import openpyxl
@@ -23,8 +23,19 @@ def exit():
 
 def excelOutput():
     wb = openpyxl.Workbook()
-    sheet1 = wb['Sheet']
-    sheet1.title = '찡긋 ><'
+    sheet_result = wb['Sheet']
+    sheet_result.title = '찡긋 ><'
+
+    print("================")
+    print("==excel output==")
+    print("================")
+    print()
+    name = ""
+    for character in input("파일 이름을 입력해주세요 >> "):
+        if character.isalnum():
+            name += character
+
+
     deepblueFill = PatternFill(start_color='FF538DD5',
                                end_color='FF538DD5',
                                fill_type='solid')
@@ -37,56 +48,76 @@ def excelOutput():
                                 end_color='FFC5D9F1',
                                 fill_type='solid')
 
-    for t in range(int(examples) + 1):
-        sheet1.cell(row=1, column=t + 2).value = "#" + str(t)
-        sheet1.cell(row=1, column=t + 2).fill = deepblueFill
+    sheet_result.cell(row = 2, column = options + 5).value = "소숫점"
+    sheet_result.cell(row = 2, column = options + 5).fill = blueFill
+    sheet_result.cell(row = 3, column = options + 5).value = point
+    sheet_result.cell(row = 3, column = options + 5).fill = lightblueFill
 
-    for t in range(int(problem)):
-        sheet1.cell(row=2 * (t + 1), column=1).value = str(t + 1) + "번"
-        sheet1.cell(row=2 * (t + 1), column=1).fill = deepblueFill
-        sheet1.cell(row=2 * (t + 2) - 1, column=1).fill = deepblueFill
 
-    for x in range(int(problem)):
-        sheet1.cell(row=2 * (x + 1), column=int(examples) + 3).value = people
-        for y in range(int(examples) + 1):
+    for t in range(0, options + 1):
+        sheet_result.cell(row=1, column=t + 2).value = "#" + str(t)
+        sheet_result.cell(row=1, column=t + 2).fill = deepblueFill
+
+    for t in range(int(questions)):
+        sheet_result.cell(row=2 * (t + 1), column=1).value = str(t + 1) + "번"
+        sheet_result.cell(row=2 * (t + 1), column=1).fill = deepblueFill
+        sheet_result.cell(row=2 * (t + 2) - 1, column=1).fill = deepblueFill
+
+    for x in range(int(questions)):
+        sheet_result.cell(row=2 * (x + 1), column=(options + 3)).value = people
+        for y in range(0, options + 1):
             if y == 10:
                 k = "t"
             else:
                 k = str(y)
-            sheet1.cell(row=2 * (x + 1), column=y + 2).value = array[x][k]
-            # sheet1.cell(row = 2 * (x + 2) - 1,column = y+2).value = (str(calRate(array[x][k], point)))
-
-            sheet1.cell(row=2 * (x + 2) - 1, column=y + 2).value = ('%s%s%d%s%s%d%s%d%s%d%s' % (
+            sheet_result.cell(row = 2 * (x + 1), column = y + 2).value = array[x][k]
+            sheet_result.cell(row = 2 * (x + 2) - 1, column = y + 2).value = ('%s%s%d%s%s%d%s%d%s%s%d%s' % (
                 "= ROUND(", excel_alpha[y + 2], (2 * (x + 1)), "/",
-                excel_alpha[int(examples)+3],(2 * (x + 1)), "*", 100, ",", 2, ")"))
+                excel_alpha[options + 3], (2 * (x + 1)), "*", 100, ",",
+                excel_alpha[options + 5], 3, ")"))         # = round
 
             if array[x][k] != 0:
-                sheet1.cell(row=2 * (x + 1), column=y + 2).fill = blueFill
-                sheet1.cell(row=2 * (x + 2) - 1, column=y + 2).fill = lightblueFill
+                sheet_result.cell(row = 2 * (x + 1), column=y + 2).fill = blueFill
+                sheet_result.cell(row = 2 * (x + 2) - 1, column=y + 2).fill = lightblueFill
 
-        sheet1.cell(row=2 * (x + 1), column=int(examples) + 3).value = ('%s%s%d%s%s%d%s' % (
+        sheet_result.cell(row = 2 * (x + 1), column = options + 3).value = ('%s%s%d%s%s%d%s' % (
             "= SUM(", excel_alpha[2], (2 * (x + 1)), ":",
-            excel_alpha[int(examples) + 2], (2 * (x + 1)), ")"))
-        sheet1.cell(row=2 * (x + 2) - 1, column=int(examples) + 3).value = ('%s%s%d%s%s%d%s%d%s' % (
+            excel_alpha[options + 2], (2 * (x + 1)), ")"))
+        sheet_result.cell(row=2 * (x + 2) - 1, column=options + 3).value = ('%s%s%d%s%s%d%s%d%s' % (
             "= ROUND(SUM(", excel_alpha[2], (2 * (x + 2) - 1), ":",
-            excel_alpha[int(examples) + 2], (2 * (x + 2) - 1), "),",0,")"))
+            excel_alpha[options + 2], (2 * (x + 2) - 1), "),",0,")"))
 
-    name = input("파일 이름을 입력해주세요 >> ")
     wb.save(name + ".xlsx")
+    print()
     print("================")
     print("==저장되었습니다.==")
     print("================")
     print()
 
 
+def excel_sum(row1, column1, row2, column2):
+    sum_stc = ('%s%s%d%s%s%d%s' % (
+            "= SUM(", excel_alpha[row1], column1, ":",
+            excel_alpha[row2], column2, ")"))
+    return sum_stc
+
+
+def excel_round(num, point):
+    # sum_round = ('%s%d%s%s%d%s%d%s%s%d%s' % (
+    #             "= ROUND(", excel_alpha[y + 2], (2 * (x + 1)), "/",
+    #             excel_alpha[options + 3],(2 * (x + 1)), "*", 100, ",",
+    #             excel_alpha[options + 6],2, ")"))         # = round
+    return sum_round
+
+
 def show():
-    print("------결과------")
+    print("------@ 결과 @------")
     print("참여 인원 -> " + str(people) + "명")
     print('%s%d%s' % ("무효표 -> ", abnormal, "개"))
-    for x in range(int(problem)):
+    for x in range(int(questions)):
         print('%d%s' % (x + 1, "."), end=" ")
 
-        for y in range(int(examples) + 1):
+        for y in range(0, options + 1):
             if y == 10:
                 k = "t"
             else:
@@ -94,7 +125,7 @@ def show():
             print('%2d%-2s%4d%-2s' % (y, ":", array[x][k], "ea"), end=" ")
         print()
         print("%3s" % "", end="")
-        for y in range(int(examples) + 1):
+        for y in range(0, options + 1):
             if y == 10:
                 k = "t"
             else:
@@ -122,27 +153,17 @@ def snap():
     print("+ 'm'입력시 중간점검 가능하고 'exit'입력시 종료")
     print("=================================================")
     print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-    print("==========================================v0.9.2=")
+    print("==========================================v0.9.4=")
     print()
 
 
 def snap_help():
-    for x in range(17):
-        print("x", end="")
-    print("***@ 도움말 @***", end="")
-    for x in range(17):
-        print("x", end="")
+    print("------@ 도움말 @------")
     print()
-    print("%-45s%s" % ("| m -> 중간점검", "|"))
-    print("%-44s%s" % ("| x -> 무효표 입력", "|"))
-    print("%-46s%s" % ("| s -> excel로 저장", "|"))
-    print("%-47s%s" % ("| exit -> 종료", "|"))
-    # print("m -> 중간점검")
-    # print("x -> 무효표 입력")
-    # print("s -> excel로 저장")
-    # print("exit -> 종료")
-    for x in range(50):
-        print("x", end="")
+    print("    m -> 중간점검")
+    print("    x -> 무효표 입력")
+    print("    s -> excel로 저장")
+    print("    exit -> 종료")
     print()
 
 
@@ -150,20 +171,20 @@ if __name__ == '__main__':
     array = []
     ques_dic = {}
     point = 2  # 소숫점
-    excel_alpha = ["null", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N"]
+    excel_alpha = ["null", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q"]
 
     snap()
 
     while True:
-        problem = input("설문지에 몇가지 문제가 존재하나요?? \n => ")
-        examples = input("보기 갯수는 몇개인가요? (최대값을 입력해주세요!) \n => ")
+        questions = input("설문지에 몇가지 문제가 존재하나요?? \n => ")
+        options = input("보기 갯수는 몇개인가요? (최대값을 입력해주세요!) \n => ")
 
-        if not problem.isdigit() or not examples.isdigit():
+        if not questions.isdigit() or not options.isdigit():
             print("++++++++++++++++++++++++++++++++++++")
             print("잘못된 입력입니다. 다시 입력해주세요.")
             print("++++++++++++++++++++++++++++++++++++")
             print()
-        elif int(examples) > 10 or int(examples) <= 0:
+        elif int(options) > 10 or int(options) <= 0:
             print("++++++++++++++++++++++++++++++++++++++++++++++++")
             print("보기 갯수는 최대 10까지 가능합니다. 확인해주세요.")
             print("++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -173,15 +194,17 @@ if __name__ == '__main__':
 
     people = 0
     abnormal = 0
+    questions = int(questions)
+    options = int(options)
 
-    for x in range(int(examples) + 1):
+    for x in range(0, options + 1):
         if x == 10:
             x = "t"
         else:
             pass
         ques_dic[str(x)] = 0
 
-    for x in range(int(problem)):
+    for x in range(0, questions):
         array.append(ques_dic.copy())
 
     right = True
@@ -196,7 +219,7 @@ if __name__ == '__main__':
         print('%s %d%s' % ("======", people + 1, "번째 입력"))
         print("**", end="")
 
-        for k in range(int(problem)):
+        for k in range(0, questions):
             print("*", end="")
         print()
 
@@ -208,7 +231,6 @@ if __name__ == '__main__':
             continue
 
         elif result == "s":
-            print(result)
             excelOutput()
 
         elif result == "m":
@@ -241,7 +263,7 @@ if __name__ == '__main__':
 
             print()
 
-        elif len(result) != int(problem):
+        elif len(result) != questions:
             right = False
             print("덜이나 더 입력됐어용 > ")
 
@@ -257,7 +279,7 @@ if __name__ == '__main__':
                     break
 
             if right:
-                for y in range(int(problem)):
+                for y in range(0, questions):
                     array[y][str(result[y])] = array[y][str(result[y])] + 1
                 people = people + 1
 
